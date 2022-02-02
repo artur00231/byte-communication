@@ -18,7 +18,7 @@
     <ClCompile Include="HammingEncoder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SStreamReader.cpp">
+    <ClCompile Include="ByteChannel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -26,7 +26,7 @@
     <ClInclude Include="HammingEncoder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SStreamReader.h">
+    <ClInclude Include="ByteChannel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
