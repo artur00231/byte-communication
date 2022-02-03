@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ByteChannelIOTest.cpp" />
+    <ClCompile Include="DataPacketTest.cpp" />
     <ClCompile Include="HammingEncoderTest.cpp" />
     <ClCompile Include="ByteChannelTest.cpp" />
     <ClCompile Include="test.cpp" />

@@ -32,5 +32,8 @@
     <ClInclude Include="ByteChannelIO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DataPacket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

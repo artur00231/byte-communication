@@ -146,6 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ByteChannelIO.h" />
+    <ClInclude Include="DataPacket.h" />
     <ClInclude Include="HammingEncoder.h" />
     <ClInclude Include="ByteChannel.h" />
   </ItemGroup>
