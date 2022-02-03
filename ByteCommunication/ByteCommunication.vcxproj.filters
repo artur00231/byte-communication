@@ -29,5 +29,8 @@
     <ClInclude Include="ByteChannel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ByteChannelIO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

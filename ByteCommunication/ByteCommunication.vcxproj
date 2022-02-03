@@ -145,6 +145,7 @@
     <ClCompile Include="ByteChannel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ByteChannelIO.h" />
     <ClInclude Include="HammingEncoder.h" />
     <ClInclude Include="ByteChannel.h" />
   </ItemGroup>
