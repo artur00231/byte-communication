@@ -2,7 +2,7 @@
 
 #include "../ByteCommunication/HammingEncoder.h"
 
-TEST(HammingEncoderTest, TEST1) 
+TEST(HammingEncoderTest, ENCODE_DECODE1) 
 {
 	auto value = HammingEncoder::encodeByte('\5');
 
@@ -12,7 +12,7 @@ TEST(HammingEncoderTest, TEST1)
 	EXPECT_EQ(HammingEncoder::DecodeResult::Result::CORRECT, de_value.result);
 }
 
-TEST(HammingEncoderTest, TEST2)
+TEST(HammingEncoderTest, ENCODE_DECODE2)
 {
 	for (int i = 0; i < 255; i++)
 	{
@@ -26,7 +26,7 @@ TEST(HammingEncoderTest, TEST2)
 	}
 }
 
-TEST(HammingEncoderTest, TEST3)
+TEST(HammingEncoderTest, ENCODE_CORRECT_DECODE1)
 {
 	for (int i = 0; i < 255; i++)
 	{
@@ -45,7 +45,7 @@ TEST(HammingEncoderTest, TEST3)
 	}
 }
 
-TEST(HammingEncoderTest, TEST4)
+TEST(HammingEncoderTest, ENCODE_CORRECT_DECODE2)
 {
 	for (int i = 0; i < 255; i++)
 	{
@@ -68,7 +68,7 @@ TEST(HammingEncoderTest, TEST4)
 	}
 }
 
-TEST(HammingEncoderTest, TEST5)
+TEST(HammingEncoderTest, ENCODE_UNCORRECTABLE_HIGH)
 {
 	for (int i = 0; i < 255; i++)
 	{
@@ -94,7 +94,7 @@ TEST(HammingEncoderTest, TEST5)
 	}
 }
 
-TEST(HammingEncoderTest, TEST6)
+TEST(HammingEncoderTest, ENCODE_UNCORRECTABLE_LOW)
 {
 	for (int i = 0; i < 255; i++)
 	{

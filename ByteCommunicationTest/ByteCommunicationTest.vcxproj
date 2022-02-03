@@ -36,7 +36,7 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ByteChannelIO.cpp" />
+    <ClCompile Include="ByteChannelIOTest.cpp" />
     <ClCompile Include="HammingEncoderTest.cpp" />
     <ClCompile Include="ByteChannelTest.cpp" />
     <ClCompile Include="test.cpp" />

@@ -3,7 +3,7 @@
 #include "../ByteCommunication/ByteChannelIO.h"
 
 
-TEST(ByteChannelIO, TEST1)
+TEST(ByteChannelIO, BasicCommunication1)
 {
 	ByteChannel channel{};
 	ByteChannelIO bIO1{ channel, ByteChannel::IOPoint::P1 };
@@ -25,7 +25,7 @@ TEST(ByteChannelIO, TEST1)
 
 }
 
-TEST(ByteChannelIO, TEST2)
+TEST(ByteChannelIO, BasicCommunication2)
 {
 	ByteChannel channel{};
 	ByteChannelIO bIO1{ channel, ByteChannel::IOPoint::P1 };

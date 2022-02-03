@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "../ByteCommunication/ByteChannel.h"
 
-TEST(SStreamReaderTest, TEST1) 
+TEST(ByteChannel, BasicCommunication1)
 {
 	ByteChannel reader{};
 
@@ -19,7 +19,7 @@ TEST(SStreamReaderTest, TEST1)
 	EXPECT_TRUE(reader.isAvaiable(ByteChannel::IOPoint::P2));
 }
 
-TEST(SStreamReaderTest, TEST2) 
+TEST(ByteChannel, BasicCommunication2)
 {
 	ByteChannel reader{};
 
