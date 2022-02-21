@@ -21,6 +21,12 @@
     <ClCompile Include="ByteChannel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Communicator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ByteEncoder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HammingEncoder.h">
@@ -33,6 +39,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DataPacket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Communicator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ByteEncoder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

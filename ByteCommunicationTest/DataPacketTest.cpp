@@ -2,6 +2,8 @@
 #include "../ByteCommunication/DataPacket.h"
 
 #include <array>
+
+//TODO Write more test!
 TEST(DataPacket, TEST1)
 {
 	DataPacket<10> data{};
