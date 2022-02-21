@@ -24,13 +24,13 @@ ByteEncoder::Result ByteEncoder::pushByte(std::uint8_t byte) noexcept
 		else
 		{
 			counter++;
-			if (counter == 4)
-			{
-				counter = 1;
-				shitInto(result, shift, 0);
-			}
-
 			shitInto(result, shift, value);
+		}
+
+		if (counter == 3)
+		{
+			counter = 0;
+			shitInto(result, shift, 0);
 		}
 	}
 

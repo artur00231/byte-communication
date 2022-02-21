@@ -12,7 +12,7 @@ namespace ByteEncoderTestHelper
 	static std::uint64_t SEED{ 0 };
 	static constexpr std::size_t RANDOM_SIZE{ 4096 };
 
-	[[nodiscard]] bool isValid(std::uint8_t value, int& counter)
+	[[nodiscard]] bool isValid(std::uint8_t value, int& counter, int max)
 	{
 		for (int i = 0; i < 8; i++)
 		{
@@ -24,7 +24,7 @@ namespace ByteEncoderTestHelper
 			{
 				counter++;
 
-				if (counter == 4)
+				if (counter == max)
 				{
 					return false;
 				}
@@ -36,10 +36,10 @@ namespace ByteEncoderTestHelper
 		return true;
 	}
 
-	[[nodiscard]] bool isValid(std::uint8_t value)
+	[[nodiscard]] bool isValid(std::uint8_t value, int max = 4)
 	{
 		int counter{};
-		return isValid(value, counter);
+		return isValid(value, counter, max);
 	}
 
 	[[nodiscard]] bool isValid(const std::vector<std::uint8_t>& values)
@@ -48,7 +48,7 @@ namespace ByteEncoderTestHelper
 		int pos{};
 		for (auto&& value : values)
 		{
-			if (!isValid(value, counter))
+			if (!isValid(value, counter, 4))
 			{
 				return false;
 			}
@@ -61,17 +61,29 @@ namespace ByteEncoderTestHelper
 }
 TEST(ByteEncoderTest, Internal_isValid)
 {
-	EXPECT_EQ(true, ByteEncoderTestHelper::isValid(0b00000000));
-	EXPECT_EQ(true, ByteEncoderTestHelper::isValid(0b10101010));
-	EXPECT_EQ(true, ByteEncoderTestHelper::isValid(0b11101110));
-	EXPECT_EQ(true, ByteEncoderTestHelper::isValid(0b01110101));
-	EXPECT_EQ(true, ByteEncoderTestHelper::isValid(0b01010111));
+	EXPECT_TRUE(ByteEncoderTestHelper::isValid(0b00000000));
+	EXPECT_TRUE(ByteEncoderTestHelper::isValid(0b10101010));
+	EXPECT_TRUE(ByteEncoderTestHelper::isValid(0b11101110));
+	EXPECT_TRUE(ByteEncoderTestHelper::isValid(0b01110101));
+	EXPECT_TRUE(ByteEncoderTestHelper::isValid(0b01010111));
 
-	EXPECT_EQ(false, ByteEncoderTestHelper::isValid(0b0111101));
-	EXPECT_EQ(false, ByteEncoderTestHelper::isValid(0b1111000));
-	EXPECT_EQ(false, ByteEncoderTestHelper::isValid(0b0001111));
-	EXPECT_EQ(false, ByteEncoderTestHelper::isValid(0b1111110));
-	EXPECT_EQ(false, ByteEncoderTestHelper::isValid(0b1111111));
+	EXPECT_FALSE(ByteEncoderTestHelper::isValid(0b0111101));
+	EXPECT_FALSE(ByteEncoderTestHelper::isValid(0b1111000));
+	EXPECT_FALSE(ByteEncoderTestHelper::isValid(0b0001111));
+	EXPECT_FALSE(ByteEncoderTestHelper::isValid(0b1111110));
+	EXPECT_FALSE(ByteEncoderTestHelper::isValid(0b1111111));
+
+	EXPECT_TRUE(ByteEncoderTestHelper::isValid(0b00000000, 3));
+	EXPECT_TRUE(ByteEncoderTestHelper::isValid(0b10101010, 3));
+	EXPECT_TRUE(ByteEncoderTestHelper::isValid(0b11001100, 3));
+	EXPECT_TRUE(ByteEncoderTestHelper::isValid(0b01100101, 3));
+	EXPECT_TRUE(ByteEncoderTestHelper::isValid(0b01010011, 3));
+
+	EXPECT_FALSE(ByteEncoderTestHelper::isValid(0b0111001, 3));
+	EXPECT_FALSE(ByteEncoderTestHelper::isValid(0b1110000, 3));
+	EXPECT_FALSE(ByteEncoderTestHelper::isValid(0b0000111, 3));
+	EXPECT_FALSE(ByteEncoderTestHelper::isValid(0b1111110, 3));
+	EXPECT_FALSE(ByteEncoderTestHelper::isValid(0b1111111, 3));
 }
 
 TEST(ByteEncoderTest, Internal_isValid_V)
@@ -116,7 +128,7 @@ TEST(ByteEncoderTest, ByteEncoderTest3)
 	{
 		EXPECT_EQ(encoder.flush().additional, false);
 
-		if (!ByteEncoderTestHelper::isValid(static_cast<std::uint8_t>(i)))
+		if (!ByteEncoderTestHelper::isValid(static_cast<std::uint8_t>(i), 3))
 		{
 			continue;
 		}
@@ -133,11 +145,11 @@ TEST(ByteEncoderTest, ByteEncoderTest4)
 {
 	ByteEncoder encoder{};
 
-	encoder.pushByte(0b00001111);
+	encoder.pushByte(0b00000111);
 
 	for (std::uint16_t i{}; i <= 0b11111111; i++)
 	{
-		if (ByteEncoderTestHelper::isValid(static_cast<std::uint8_t>(i)))
+		if (ByteEncoderTestHelper::isValid(static_cast<std::uint8_t>(i), 3))
 		{
 			continue;
 		}
@@ -147,7 +159,6 @@ TEST(ByteEncoderTest, ByteEncoderTest4)
 		auto result = encoder.pushByte(static_cast<std::uint8_t>(i));
 
 		EXPECT_EQ(result.additional, false);
-		EXPECT_NE(result.data, static_cast<std::uint8_t>(i));
 		ASSERT_EQ(encoder.isEmpty(), false);
 	}
 }
