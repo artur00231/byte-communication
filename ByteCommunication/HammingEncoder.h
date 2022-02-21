@@ -13,7 +13,7 @@ public:
 
 	struct DecodeResult
 	{
-		enum class Result
+		enum class Result : std::uint8_t
 		{
 			CORRECT, CORRECTED, UNCORRECTABLE
 		};
