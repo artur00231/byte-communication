@@ -15,6 +15,9 @@ add_executable(tests
 	ByteChannelTest.cpp
 	DataPacketTest.cpp
 	HammingEncoderTest.cpp
+	ByteEncoderTest.cpp
+	pch.h
+	pch.cpp
 )
 
 target_link_libraries(tests gtest_main ByteCommunication)

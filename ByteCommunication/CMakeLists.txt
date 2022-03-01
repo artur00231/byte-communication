@@ -4,6 +4,9 @@ add_library(ByteCommunication
 	ByteChannelIO.h 
 	DataPacket.h
 	HammingEncoder.cpp
-	HammingEncoder.h)
+	HammingEncoder.h
+	ByteEncoder.cpp
+	ByteEncoder.h
+)
 
 target_include_directories(ByteCommunication PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
