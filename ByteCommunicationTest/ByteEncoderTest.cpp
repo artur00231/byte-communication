@@ -241,7 +241,7 @@ TEST(ByteEncoderTest, ByteDecoderTest2)
 
 	auto result = decoder.pushByte(0b10101010);
 
-	EXPECT_TRUE(decoder.isEmpty(), true);
+	EXPECT_TRUE(decoder.isEmpty());
 	EXPECT_FALSE(result.isEmpty);
 	EXPECT_EQ(result.data, 0b10101010);
 }
