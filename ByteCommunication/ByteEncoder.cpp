@@ -88,3 +88,52 @@ void ByteEncoder::shitInto(ByteEncoder::Result& result, std::uint8_t& shift, std
 		data_size++;
 	}
 }
+
+ByteDecoder::Result ByteDecoder::pushByte(std::uint8_t byte) noexcept
+{
+	Result result{};
+
+	for (std::uint8_t i = 0; i < 8; i++)
+	{
+		std::uint8_t value = (byte & 0x80) >> 7;
+		byte <<= 1;
+
+		if (counter == 3)
+		{
+			counter = 0;
+			continue;
+		}
+
+		if (value == 0)
+		{
+			counter = 0;
+		}
+		else
+		{
+			counter++;
+		}
+
+		data |= (value << (7 - data_size));
+		data_size++;
+		if (data_size == 8)
+		{
+			result.data = data;
+			result.isEmpty = false;
+			data = 0;
+			data_size = 0;
+		}
+	}
+
+	return result;
+}
+
+bool ByteDecoder::flush() noexcept
+{
+	auto to_return = isEndValid();
+
+	data = 0;
+	data_size = 0;
+	counter = 0;
+
+	return to_return;
+}

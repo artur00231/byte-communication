@@ -4,13 +4,14 @@
 #include <random>
 #include <functional>
 
+#include "helpers.h"
+
 #include "../ByteCommunication/ByteEncoder.h"
 
 namespace ByteEncoderTestHelper
 {
-	static constexpr bool USE_RANDOM{ true };
-	static std::uint64_t SEED{ 0 };
-	static constexpr std::size_t RANDOM_SIZE{ 4096 };
+	static const test_helpers::RandomSeed<test_helpers::RandomSeedHelper::RANDOM> seed{};
+	static constexpr std::size_t RANDOM_SIZE{ 100000 };
 
 	[[nodiscard]] bool isValid(std::uint8_t value, int& counter, int max)
 	{
@@ -196,20 +197,7 @@ TEST(ByteEncoderTest, ByteEncoderTest6)
 {
 	std::vector<std::uint8_t> data{};
 
-	if constexpr (ByteEncoderTestHelper::USE_RANDOM)
-	{
-		std::random_device rd{};
-		ByteEncoderTestHelper::SEED = rd();
-
-		std::cout << "\tTESTING WITH RANDOM SEED " << ByteEncoderTestHelper::SEED << "\n";
-	}
-	else
-	{
-		std::cout << "\tTESTING WITH SEED " << ByteEncoderTestHelper::SEED << "\n";
-	}
-
-
-	std::mt19937_64 gen{ ByteEncoderTestHelper::SEED };
+	std::mt19937_64 gen{ ByteEncoderTestHelper::seed };
 	std::uniform_int_distribution dist{ 0, 255 };
 	auto rand = std::bind(dist, gen);
 
@@ -219,7 +207,7 @@ TEST(ByteEncoderTest, ByteEncoderTest6)
 
 	ByteEncoder encoder{};
 
-	EXPECT_FALSE(ByteEncoderTestHelper::isValid(data)) << "WITH SEED = " << ByteEncoderTestHelper::SEED;
+	EXPECT_FALSE(ByteEncoderTestHelper::isValid(data)) << "WITH SEED = " << ByteEncoderTestHelper::seed;
 
 	std::vector<std::uint8_t> data_enc{};
 
@@ -234,6 +222,178 @@ TEST(ByteEncoderTest, ByteEncoderTest6)
 		}
 	}
 
-	EXPECT_TRUE(ByteEncoderTestHelper::isValid(data_enc)) << "WITH SEED = " << ByteEncoderTestHelper::SEED;;
-	EXPECT_GE(data_enc.size(), data.size()) << "WITH SEED = " << ByteEncoderTestHelper::SEED;;
+	EXPECT_TRUE(ByteEncoderTestHelper::isValid(data_enc)) << "WITH SEED = " << ByteEncoderTestHelper::seed;
+	EXPECT_GE(data_enc.size(), data.size()) << "WITH SEED = " << ByteEncoderTestHelper::seed;
+}
+
+
+
+TEST(ByteEncoderTest, ByteDecoderTest1)
+{
+	ByteDecoder decoder{};
+
+	EXPECT_TRUE(decoder.isEmpty());
+}
+
+TEST(ByteEncoderTest, ByteDecoderTest2)
+{
+	ByteDecoder decoder{};
+
+	auto result = decoder.pushByte(0b10101010);
+
+	EXPECT_TRUE(decoder.isEmpty(), true);
+	EXPECT_FALSE(result.isEmpty);
+	EXPECT_EQ(result.data, 0b10101010);
+}
+
+TEST(ByteEncoderTest, ByteDecoderTest3)
+{
+	ByteDecoder decoder{};
+
+	for (std::uint16_t i{}; i <= 0b11111111; i++)
+	{
+		decoder.flush();
+
+		if (!ByteEncoderTestHelper::isValid(static_cast<std::uint8_t>(i), 3))
+		{
+			continue;
+		}
+
+		auto result = decoder.pushByte(static_cast<std::uint8_t>(i));
+
+		EXPECT_FALSE(result.isEmpty);
+		EXPECT_EQ(result.data, i);
+		EXPECT_TRUE(decoder.isEmpty());
+	}
+}
+
+TEST(ByteEncoderTest, ByteDecoderTest4)
+{
+	ByteDecoder decoder{};
+
+	for (std::uint16_t i{}; i <= 0b11111111; i++)
+	{
+		if (ByteEncoderTestHelper::isValid(static_cast<std::uint8_t>(i), 3))
+		{
+			continue;
+		}
+
+		auto result = decoder.pushByte(static_cast<std::uint8_t>(i));
+
+		EXPECT_FALSE(decoder.isEmpty() && decoder.isEndValid());
+
+		decoder.flush();
+	}
+}
+
+TEST(ByteEncoderTest, ByteEncoderDecoderTest1)
+{
+	std::vector<std::uint8_t> data{};
+
+	std::generate_n(std::back_inserter(data), 256, []() {
+		static std::uint8_t i{};
+		return i++;
+		});
+
+	ByteEncoder encoder{};
+
+	EXPECT_FALSE(ByteEncoderTestHelper::isValid(data));
+
+	std::vector<std::uint8_t> data_enc{};
+
+	for (auto&& x : data)
+	{
+		auto result = encoder.pushByte(x);
+		data_enc.push_back(result.data);
+
+		if (result.additional)
+		{
+			data_enc.push_back(result.additional_data);
+		}
+	}
+
+	auto result = encoder.flush();
+	if (result.additional)
+	{
+		data_enc.push_back(result.additional_data);
+	}
+
+	EXPECT_TRUE(ByteEncoderTestHelper::isValid(data_enc));
+	EXPECT_GE(data_enc.size(), data.size());
+
+	std::vector<std::uint8_t> data_dec{};
+
+	ByteDecoder decoder{};
+
+	for (auto&& x : data_enc)
+	{
+		auto result = decoder.pushByte(x);
+		if (!result.isEmpty)
+		{
+			data_dec.push_back(result.data);
+		}
+	}
+
+	EXPECT_FALSE(ByteEncoderTestHelper::isValid(data_dec));
+	EXPECT_EQ(data_dec.size(), data.size());
+
+	EXPECT_EQ(data_dec, data);
+}
+
+TEST(ByteEncoderTest, ByteEncoderDecoderTest2)
+{
+	std::vector<std::uint8_t> data{};
+
+	std::mt19937_64 gen{ ByteEncoderTestHelper::seed };
+	std::uniform_int_distribution dist{ 0, 255 };
+	auto rand = std::bind(dist, gen);
+
+	std::generate_n(std::back_inserter(data), ByteEncoderTestHelper::RANDOM_SIZE, [&rand]() {
+		return rand();
+		});
+
+	ByteEncoder encoder{};
+
+	EXPECT_FALSE(ByteEncoderTestHelper::isValid(data)) << "WITH SEED = " << ByteEncoderTestHelper::seed;
+
+	std::vector<std::uint8_t> data_enc{};
+
+	for (auto&& x : data)
+	{
+		auto result = encoder.pushByte(x);
+		data_enc.push_back(result.data);
+
+		if (result.additional)
+		{
+			data_enc.push_back(result.additional_data);
+		}
+	}
+
+	auto result = encoder.flush();
+	if (result.additional)
+	{
+		data_enc.push_back(result.additional_data);
+	}
+
+	EXPECT_TRUE(ByteEncoderTestHelper::isValid(data_enc)) << "WITH SEED = " << ByteEncoderTestHelper::seed;
+	EXPECT_GE(data_enc.size(), data.size()) << "WITH SEED = " << ByteEncoderTestHelper::seed;
+
+	std::vector<std::uint8_t> data_dec{};
+
+	ByteDecoder decoder{};
+
+	for (auto&& x : data_enc)
+	{
+		auto result = decoder.pushByte(x);
+		if (!result.isEmpty)
+		{
+			data_dec.push_back(result.data);
+		}
+	}
+
+	EXPECT_FALSE(ByteEncoderTestHelper::isValid(data_dec)) << "WITH SEED = " << ByteEncoderTestHelper::seed;
+	EXPECT_EQ(data_dec.size(), data.size()) << "WITH SEED = " << ByteEncoderTestHelper::seed;
+	EXPECT_FALSE(decoder.isEmpty() && decoder.isEndValid()) << "WITH SEED = " << ByteEncoderTestHelper::seed;
+
+	EXPECT_EQ(data_dec, data) << "WITH SEED = " << ByteEncoderTestHelper::seed;
 }
